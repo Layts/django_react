@@ -1,18 +1,75 @@
 import React, { Component } from "react";
-import { render } from "react-dom";
+import ReactDOM from 'react-dom'
+class ProductRow extends Component {
+  render() {
+    const product = this.props.product;
+      <span style={{color: 'red'}}>
+        {product.title}
+      </span>;
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: {},
-      loaded: false,
-      placeholder: "Loading"
-    };
+    return (
+      <tr>
+        <td>{product.title}</td>
+        <td>{product.price}</td>
+        <td>{product.base_unit}</td>
+      </tr>
+    );
   }
+}
+
+class ProductTable extends React.Component {
+  render() {
+
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Наименование</th>
+            <th>Цена</th>
+            <th>Единицы измерения</th>
+          </tr>
+        </thead>
+        <tbody>
+        <ProductRow
+          product={this.props.product} />
+          </tbody>
+      </table>
+    );
+  }
+}
+
+
+class FilterableProductTable extends Component {
+constructor(props) {
+  super(props);
+  // Не вызывайте здесь this.setState()!
+  this.state = {
+    value: '1',
+    data:     {
+        "id": '',
+        "title": '',
+        "price":'' ,
+        "base_unit": '',
+        "slug": ''
+    }
+    };
+    this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    handleInputChange(event){
+        this.setState({
+
+            value: event.target.value
+        });
+    }
+
+    SubmitInputChange(event){
+    alert('it not works!');
+    }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:8000/api" + window.location.pathname)
+    fetch("http://127.0.0.1:8000/api/product/"+ this.state.value)
       .then(response => {
         if (response.status > 400) {
           return this.setState(() => {
@@ -33,22 +90,20 @@ class App extends Component {
 
   render() {
     return (
+      <div>
 
-                                    <li class="cart_item item_list d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start">
-										<div class="product d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start">
-											<div class="product_name"><a href="product.html">{this.state.data.title}</a></div>
-										</div>
-										<div class="product_price text-lg-center product_text"><span>Цена: </span>{this.state.data.price}р</div>
-                                        <div class="product_quantity_container">
-										</div>
+        <form onSubmit={this.SubmitInputChange}>
+                Введите код товара:
+                <input type="text" value={this.state.value} onChange={this.handleInputChange} />
+        </form>
 
-									</li>
-
+        <ProductTable product={this.state.data} />
+      </div>
     );
   }
 }
 
-export default App;
-
-const container = document.getElementById("app");
-render(<App />, container);
+ReactDOM.render(
+  <FilterableProductTable />,
+  document.getElementById('app')
+);

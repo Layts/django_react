@@ -11,6 +11,6 @@ class ProductListCreate(generics.ListCreateAPIView):
 
 class ProductInfo(views.APIView):
 
-    def get(self, request, slug):
-        product = get_object_or_404(Product, slug=slug)
+    def get(self, request, code):
+        product = get_object_or_404(Product, code=code)
         return response.Response(ProductSerializer(product).data)
