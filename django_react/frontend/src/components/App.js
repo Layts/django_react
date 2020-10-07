@@ -45,13 +45,8 @@ constructor(props) {
   super(props);
   // Не вызывайте здесь this.setState()!
   this.state = {
-    value: '1',
+    value: '',
     data:     {
-        "id": '',
-        "title": '',
-        "price":'' ,
-        "base_unit": '',
-        "slug": ''
     }
     };
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -64,35 +59,29 @@ constructor(props) {
         });
     }
 
-    SubmitInputChange(event){
-    alert('it not works!');
-    }
 
-  componentDidMount() {
-    fetch("http://127.0.0.1:8000/api/product/"+ this.state.value)
-      .then(response => {
-        if (response.status > 400) {
-          return this.setState(() => {
-            return { placeholder: "Something went wrong!" };
-          });
-        }
-        return response.json();
-      })
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.value != prevState.value) {
+        fetch("http://127.0.0.1:8000/api/product/"+ this.state.value)
+        .then(response => {
+            return response.json();
+        })
       .then(data => {
         this.setState(() => {
           return {
-            data,
-            loaded: true
+            data:data
           };
         });
+
       });
+  }
   }
 
   render() {
     return (
       <div>
 
-        <form onSubmit={this.SubmitInputChange}>
+        <form >
                 Введите код товара:
                 <input type="text" value={this.state.value} onChange={this.handleInputChange} />
         </form>
